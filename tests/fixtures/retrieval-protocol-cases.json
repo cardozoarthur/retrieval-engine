@@ -1,0 +1,277 @@
+{
+  "description": "R06 request shape cases; running worker and cancellation have separate integration tests",
+  "valid_shape": [
+    {
+      "schema_version": 1,
+      "id": "o",
+      "op": "open",
+      "source": {
+        "kind": "remote",
+        "url": "https://example.org/law.pdf"
+      }
+    },
+    {
+      "schema_version": 1,
+      "id": "q",
+      "op": "search",
+      "session_id": "s",
+      "query": "responsabilidade",
+      "mode": "hybrid"
+    },
+    {
+      "schema_version": 1,
+      "id": "e",
+      "op": "expand",
+      "session_id": "s",
+      "reference": "r",
+      "before": 20,
+      "after": 40,
+      "unit": "words"
+    },
+    {
+      "schema_version": 1,
+      "id": "p",
+      "op": "pack",
+      "session_id": "s",
+      "references": [
+        "r"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "c",
+      "op": "close",
+      "session_id": "s"
+    },
+    {
+      "schema_version": 1,
+      "id": "i",
+      "op": "capabilities"
+    },
+    {
+      "schema_version": 1,
+      "id": "cancel-1",
+      "op": "cancel",
+      "request_id": "q"
+    },
+    {
+      "schema_version": 1,
+      "id": "status-1",
+      "op": "request_status",
+      "request_id": "q"
+    },
+    {
+      "schema_version": 1,
+      "id": "bounded-q",
+      "op": "search",
+      "session_id": "s",
+      "mode": "bm25",
+      "query": "prova",
+      "timeout_ms": 30
+    },
+    {
+      "schema_version": 1,
+      "id": "inc",
+      "op": "start_open",
+      "source": {
+        "kind": "remote",
+        "url": "https://example.org/document.pdf"
+      }
+    },
+    {
+      "schema_version": 1,
+      "id": "inc",
+      "op": "poll_open",
+      "task_id": "t",
+      "max_events": 2
+    },
+    {
+      "schema_version": 1,
+      "id": "inc",
+      "op": "peek_open",
+      "task_id": "t",
+      "query": "prova"
+    },
+    {
+      "schema_version": 1,
+      "id": "inc",
+      "op": "expand_open",
+      "task_id": "t",
+      "reference": "p",
+      "before": 2,
+      "after": 3,
+      "unit": "characters"
+    },
+    {
+      "schema_version": 1,
+      "id": "inc",
+      "op": "finish_open",
+      "task_id": "t",
+      "references": [
+        "p"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "inc",
+      "op": "cancel_open",
+      "task_id": "t"
+    },
+    {
+      "schema_version": 1,
+      "id": "inc",
+      "op": "task_status",
+      "task_id": "t"
+    }
+  ],
+  "invalid_shape": [
+    {
+      "schema_version": 1,
+      "id": "e",
+      "op": "expand",
+      "session_id": "s",
+      "reference": "r",
+      "before": -1,
+      "after": 40,
+      "unit": "words"
+    },
+    {
+      "schema_version": 1,
+      "id": "e",
+      "op": "expand",
+      "session_id": "s",
+      "reference": "r",
+      "before": 20,
+      "after": 40,
+      "unit": "bytes"
+    },
+    {
+      "schema_version": 1,
+      "id": "q",
+      "op": "search",
+      "session_id": "s",
+      "query": "responsabilidade",
+      "mode": "hybrid",
+      "model_dir": "injected"
+    },
+    {
+      "schema_version": 1,
+      "id": "o",
+      "op": "open",
+      "source": {
+        "kind": "remote",
+        "url": "http://example.org/law.pdf"
+      }
+    },
+    {
+      "schema_version": 1,
+      "id": "p",
+      "op": "pack",
+      "session_id": "s",
+      "references": [
+        "r",
+        "r"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "q",
+      "op": "search",
+      "session_id": "s",
+      "query": "responsabilidade",
+      "mode": "hybrid",
+      "top_k": 0
+    },
+    {
+      "schema_version": 1,
+      "id": "c",
+      "op": "cancel",
+      "request_id": ""
+    },
+    {
+      "schema_version": 1,
+      "id": "c",
+      "op": "cancel",
+      "request_id": "q",
+      "pid": 42
+    },
+    {
+      "schema_version": 1,
+      "id": "q",
+      "op": "capabilities",
+      "timeout_ms": 0
+    },
+    {
+      "schema_version": 1,
+      "id": "q",
+      "op": "capabilities",
+      "timeout_ms": 1.5
+    },
+    {
+      "schema_version": 1,
+      "id": "c",
+      "op": "cancel",
+      "request_id": "q",
+      "timeout_ms": 10
+    },
+    {
+      "schema_version": 1,
+      "id": "inc",
+      "op": "poll_open",
+      "task_id": "t",
+      "max_events": 0
+    },
+    {
+      "schema_version": 1,
+      "id": "inc",
+      "op": "peek_open",
+      "task_id": "t",
+      "query": "prova",
+      "mode": "hybrid"
+    },
+    {
+      "schema_version": 1,
+      "id": "inc",
+      "op": "expand_open",
+      "task_id": "t",
+      "reference": "p",
+      "before": 2,
+      "after": 3,
+      "unit": "bytes"
+    },
+    {
+      "schema_version": 1,
+      "id": "inc",
+      "op": "finish_open",
+      "task_id": "t",
+      "references": [
+        "p",
+        "p"
+      ]
+    },
+    {
+      "schema_version": 1,
+      "id": "inc",
+      "op": "cancel_open",
+      "task_id": "t",
+      "timeout_ms": 1
+    },
+    {
+      "schema_version": 1,
+      "id": "inc",
+      "op": "task_status",
+      "task_id": "t",
+      "pid": 42
+    },
+    {
+      "schema_version": 1,
+      "id": "inc",
+      "op": "start_open",
+      "source": {
+        "kind": "remote",
+        "url": "https://example.org/a"
+      },
+      "model_dir": "injected"
+    }
+  ]
+}

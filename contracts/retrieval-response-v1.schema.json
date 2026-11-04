@@ -1,0 +1,1363 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:retrieval-engine:worker-response:1",
+  "title": "Retrieval worker responses v1",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "ok": {
+          "const": true
+        },
+        "result": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/open"
+            },
+            {
+              "$ref": "#/$defs/search"
+            },
+            {
+              "$ref": "#/$defs/view"
+            },
+            {
+              "$ref": "#/$defs/pack"
+            },
+            {
+              "$ref": "#/$defs/close"
+            },
+            {
+              "$ref": "#/$defs/capabilities"
+            },
+            {
+              "$ref": "#/$defs/cancel"
+            },
+            {
+              "$ref": "#/$defs/request_status"
+            },
+            {
+              "$ref": "#/$defs/open_task"
+            },
+            {
+              "$ref": "#/$defs/peek_open"
+            },
+            {
+              "$ref": "#/$defs/expand_open"
+            },
+            {
+              "$ref": "#/$defs/finish_open"
+            },
+            {
+              "$ref": "#/$defs/cancel_open"
+            },
+            {
+              "$ref": "#/$defs/task_status"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema_version",
+        "id",
+        "ok",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 128
+        },
+        "ok": {
+          "const": false
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "enum": [
+                "invalid_request",
+                "resource_limit",
+                "unknown_session",
+                "unknown_reference",
+                "forbidden_source",
+                "source_unavailable",
+                "ocr_required",
+                "feature_unavailable",
+                "model_unavailable",
+                "operation_failed",
+                "internal_error",
+                "cancelled",
+                "deadline_exceeded",
+                "duplicate_request_id",
+                "unknown_request",
+                "unknown_task",
+                "task_not_ready",
+                "task_cancelled",
+                "task_expired",
+                "task_failed",
+                "task_finalized"
+              ]
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "id",
+        "ok",
+        "error"
+      ],
+      "additionalProperties": false
+    }
+  ],
+  "$defs": {
+    "hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "session": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "offset": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 64000000
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "requested_source": {
+          "type": "string",
+          "maxLength": 8192
+        },
+        "final_source": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8192
+        },
+        "fetched_unix_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "media_type": {
+          "type": "string",
+          "maxLength": 512
+        },
+        "format": {
+          "enum": [
+            "text",
+            "html",
+            "pdf"
+          ]
+        },
+        "raw_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 67108864
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "text_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "snapshot_id": {
+          "$ref": "#/$defs/hash"
+        },
+        "extractor": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "charset": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 64
+        }
+      },
+      "required": [
+        "schema_version",
+        "requested_source",
+        "final_source",
+        "fetched_unix_seconds",
+        "media_type",
+        "format",
+        "raw_bytes",
+        "raw_sha256",
+        "text_sha256",
+        "snapshot_id",
+        "extractor",
+        "charset"
+      ],
+      "additionalProperties": false
+    },
+    "page": {
+      "type": "object",
+      "properties": {
+        "number": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000
+        },
+        "start": {
+          "$ref": "#/$defs/offset"
+        },
+        "end": {
+          "$ref": "#/$defs/offset"
+        },
+        "has_text": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "number",
+        "start",
+        "end",
+        "has_text"
+      ],
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "snapshot_id": {
+          "$ref": "#/$defs/hash"
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8192
+        },
+        "start": {
+          "$ref": "#/$defs/offset"
+        },
+        "end": {
+          "$ref": "#/$defs/offset"
+        },
+        "pages": {
+          "type": "array",
+          "maxItems": 5000,
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5000
+          }
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 65536
+        }
+      },
+      "required": [
+        "snapshot_id",
+        "source",
+        "start",
+        "end",
+        "pages",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "expansion": {
+      "type": "object",
+      "properties": {
+        "before": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65536
+        },
+        "after": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65536
+        },
+        "unit": {
+          "enum": [
+            "characters",
+            "words"
+          ]
+        }
+      },
+      "required": [
+        "before",
+        "after",
+        "unit"
+      ],
+      "additionalProperties": false
+    },
+    "record": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "session_id": {
+          "$ref": "#/$defs/session"
+        },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "document_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 63
+        },
+        "snapshot_id": {
+          "$ref": "#/$defs/hash"
+        },
+        "query_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "anchor_start": {
+          "$ref": "#/$defs/offset"
+        },
+        "anchor_end": {
+          "$ref": "#/$defs/offset"
+        },
+        "start": {
+          "$ref": "#/$defs/offset"
+        },
+        "end": {
+          "$ref": "#/$defs/offset"
+        },
+        "quote_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "parent_reference": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/hash"
+            }
+          ]
+        },
+        "expansion": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/expansion"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema_version",
+        "session_id",
+        "ordinal",
+        "document_index",
+        "snapshot_id",
+        "query_sha256",
+        "anchor_start",
+        "anchor_end",
+        "start",
+        "end",
+        "quote_sha256",
+        "parent_reference",
+        "expansion"
+      ],
+      "additionalProperties": false
+    },
+    "view": {
+      "type": "object",
+      "properties": {
+        "reference": {
+          "$ref": "#/$defs/hash"
+        },
+        "record": {
+          "$ref": "#/$defs/record"
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidence"
+        }
+      },
+      "required": [
+        "reference",
+        "record",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "pack": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "payload": {
+          "type": "object",
+          "properties": {
+            "session_id": {
+              "$ref": "#/$defs/session"
+            },
+            "documents": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 64,
+              "items": {
+                "$ref": "#/$defs/provenance"
+              }
+            },
+            "entries": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 32,
+              "items": {
+                "$ref": "#/$defs/view"
+              }
+            },
+            "ancestors": {
+              "type": "array",
+              "maxItems": 512,
+              "items": {
+                "$ref": "#/$defs/record"
+              }
+            }
+          },
+          "required": [
+            "session_id",
+            "documents",
+            "entries",
+            "ancestors"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "payload",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "isolation_report": {
+      "type": "object",
+      "properties": {
+        "helper_pid": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "process_commit_limit_bytes": {
+          "type": "integer",
+          "minimum": 33554432,
+          "maximum": 536870912
+        },
+        "peak_process_commit_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "output_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 134217728
+        },
+        "helper_exit_confirmed": {
+          "const": true
+        },
+        "kill_on_close": {
+          "const": true
+        }
+      },
+      "required": [
+        "helper_pid",
+        "process_commit_limit_bytes",
+        "peak_process_commit_bytes",
+        "output_bytes",
+        "helper_exit_confirmed",
+        "kill_on_close"
+      ],
+      "additionalProperties": false
+    },
+    "open": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "$ref": "#/$defs/session"
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        },
+        "pages": {
+          "type": "array",
+          "maxItems": 5000,
+          "items": {
+            "$ref": "#/$defs/page"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "maxItems": 5001,
+          "items": {
+            "type": "string",
+            "maxLength": 1024
+          }
+        },
+        "index_built": {
+          "const": false
+        },
+        "snapshot_retained_in_memory": {
+          "const": true
+        },
+        "isolation": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/isolation_report"
+            }
+          ]
+        }
+      },
+      "required": [
+        "session_id",
+        "provenance",
+        "pages",
+        "warnings",
+        "index_built",
+        "snapshot_retained_in_memory"
+      ],
+      "additionalProperties": false
+    },
+    "search": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "$ref": "#/$defs/session"
+        },
+        "query_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "entries": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/view"
+          }
+        },
+        "search": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "enum": [
+                "literal",
+                "bm25",
+                "hybrid",
+                "hybrid_prefilter"
+              ]
+            }
+          },
+          "required": [
+            "mode"
+          ]
+        }
+      },
+      "required": [
+        "session_id",
+        "query_sha256",
+        "entries",
+        "search"
+      ],
+      "additionalProperties": false
+    },
+    "close": {
+      "type": "object",
+      "properties": {
+        "closed": {
+          "const": true
+        },
+        "session_id": {
+          "$ref": "#/$defs/session"
+        }
+      },
+      "required": [
+        "closed",
+        "session_id"
+      ],
+      "additionalProperties": false
+    },
+    "request_status": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "state": {
+          "enum": [
+            "queued",
+            "running",
+            "finished"
+          ]
+        },
+        "native_interrupt_armed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "request_id",
+        "state",
+        "native_interrupt_armed"
+      ],
+      "additionalProperties": false
+    },
+    "cancel": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "status": {
+          "enum": [
+            "requested",
+            "already_requested",
+            "too_late"
+          ]
+        },
+        "work_finished": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "request_id",
+        "status",
+        "work_finished"
+      ],
+      "additionalProperties": false
+    },
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "protocol": {
+          "const": "retrieval-worker/v1"
+        },
+        "modes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "literal",
+              "bm25",
+              "hybrid",
+              "hybrid_prefilter"
+            ]
+          }
+        },
+        "cpu_compiled": {
+          "type": "boolean"
+        },
+        "model_configured": {
+          "type": "boolean"
+        },
+        "model_loaded": {
+          "type": "boolean"
+        },
+        "active_sessions": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16
+        },
+        "local_roots_granted": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16
+        },
+        "units": {
+          "type": "object",
+          "properties": {
+            "characters": {
+              "const": "Unicode scalar values"
+            },
+            "words": {
+              "const": "Unicode whitespace separated"
+            }
+          },
+          "required": [
+            "characters",
+            "words"
+          ],
+          "additionalProperties": false
+        },
+        "evidence_pack": {
+          "const": true
+        },
+        "ttl_enforced": {
+          "const": true
+        },
+        "hard_native_cancellation": {
+          "const": false
+        },
+        "jsonl_cancel": {
+          "type": "boolean"
+        },
+        "isolated_extraction": {
+          "type": "boolean"
+        },
+        "incremental_extraction": {
+          "type": "boolean"
+        },
+        "max_pending_requests": {
+          "const": 9
+        },
+        "max_admitted_request_ids": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65536
+        },
+        "admitted_request_ids": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65536
+        },
+        "request_timeout_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 300000
+        },
+        "session_ttl_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600000
+        },
+        "retained_source_chars": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "expired_sessions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "idle_expired_sessions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "provisional_modes": {
+          "const": [
+            "literal"
+          ]
+        },
+        "live_open_tasks": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "reserved_open_chars": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64000000
+        },
+        "max_open_tasks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "max_open_task_records": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "max_provisional_references": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "open_task_ttl_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600000
+        }
+      },
+      "required": [
+        "protocol",
+        "modes",
+        "cpu_compiled",
+        "model_configured",
+        "model_loaded",
+        "active_sessions",
+        "local_roots_granted",
+        "units",
+        "evidence_pack",
+        "ttl_enforced",
+        "hard_native_cancellation",
+        "jsonl_cancel",
+        "session_ttl_ms",
+        "retained_source_chars",
+        "expired_sessions",
+        "idle_expired_sessions"
+      ],
+      "additionalProperties": false
+    },
+    "prefix_coverage": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "const": "extracted_text_prefix"
+        },
+        "total_pages": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5000
+            }
+          ]
+        },
+        "completed_pages": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5000
+        },
+        "available_chars": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16000000
+        },
+        "end_of_source_known": {
+          "type": "boolean"
+        },
+        "full_snapshot_verified": {
+          "type": "boolean"
+        },
+        "pages_without_text": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5000
+        }
+      },
+      "required": [
+        "scope",
+        "total_pages",
+        "completed_pages",
+        "available_chars",
+        "end_of_source_known",
+        "full_snapshot_verified",
+        "pages_without_text"
+      ],
+      "additionalProperties": false
+    },
+    "acquired_source": {
+      "type": "object",
+      "properties": {
+        "requested_source": {
+          "type": "string",
+          "maxLength": 8192
+        },
+        "final_source": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8192
+        },
+        "media_type": {
+          "type": "string",
+          "maxLength": 512
+        },
+        "raw_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 67108864
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/hash"
+        }
+      },
+      "required": [
+        "requested_source",
+        "final_source",
+        "media_type",
+        "raw_bytes",
+        "raw_sha256"
+      ],
+      "additionalProperties": false
+    },
+    "open_task": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "const": "open_task"
+        },
+        "task_id": {
+          "type": "string",
+          "pattern": "^t_[0-9a-f]{64}$"
+        },
+        "state": {
+          "enum": [
+            "extracting",
+            "ready",
+            "cancel_requested",
+            "cancelled",
+            "expire_requested",
+            "expired",
+            "failed",
+            "finalized"
+          ]
+        },
+        "provisional": {
+          "const": true
+        },
+        "coverage": {
+          "$ref": "#/$defs/prefix_coverage"
+        },
+        "source": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/acquired_source"
+            }
+          ]
+        },
+        "preview_references": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 256
+        },
+        "session_id": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/session"
+            }
+          ]
+        },
+        "failure": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1024
+        },
+        "helper_exit_confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "operation",
+        "task_id",
+        "state",
+        "provisional",
+        "coverage",
+        "source",
+        "preview_references",
+        "session_id",
+        "failure",
+        "helper_exit_confirmed"
+      ],
+      "additionalProperties": false
+    },
+    "preview_record": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "pattern": "^t_[0-9a-f]{64}$"
+        },
+        "ordinal": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "raw_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8192
+        },
+        "query_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "anchor_start": {
+          "$ref": "#/$defs/offset"
+        },
+        "anchor_end": {
+          "$ref": "#/$defs/offset"
+        },
+        "start": {
+          "$ref": "#/$defs/offset"
+        },
+        "end": {
+          "$ref": "#/$defs/offset"
+        },
+        "quote_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "pages": {
+          "type": "array",
+          "maxItems": 5000,
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5000
+          }
+        },
+        "parent_reference": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "pattern": "^p_[0-9a-f]{64}$"
+            }
+          ]
+        },
+        "expansion": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/expansion"
+            }
+          ]
+        },
+        "available_chars": {
+          "$ref": "#/$defs/offset"
+        }
+      },
+      "required": [
+        "task_id",
+        "ordinal",
+        "raw_sha256",
+        "source",
+        "query_sha256",
+        "anchor_start",
+        "anchor_end",
+        "start",
+        "end",
+        "quote_sha256",
+        "pages",
+        "parent_reference",
+        "expansion",
+        "available_chars"
+      ],
+      "additionalProperties": false
+    },
+    "preview_view": {
+      "type": "object",
+      "properties": {
+        "reference": {
+          "type": "string",
+          "pattern": "^p_[0-9a-f]{64}$"
+        },
+        "record": {
+          "$ref": "#/$defs/preview_record"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 65536
+        },
+        "provisional": {
+          "const": true
+        },
+        "coverage": {
+          "$ref": "#/$defs/prefix_coverage"
+        },
+        "after_limited_by_progress": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "reference",
+        "record",
+        "text",
+        "provisional",
+        "coverage",
+        "after_limited_by_progress"
+      ],
+      "additionalProperties": false
+    },
+    "peek_open": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "const": "peek_open"
+        },
+        "task_id": {
+          "type": "string",
+          "pattern": "^t_[0-9a-f]{64}$"
+        },
+        "provisional": {
+          "const": true
+        },
+        "mode": {
+          "const": "literal"
+        },
+        "coverage": {
+          "$ref": "#/$defs/prefix_coverage"
+        },
+        "entries": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "$ref": "#/$defs/preview_view"
+          }
+        }
+      },
+      "required": [
+        "operation",
+        "task_id",
+        "provisional",
+        "mode",
+        "coverage",
+        "entries"
+      ],
+      "additionalProperties": false
+    },
+    "expand_open": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "const": "expand_open"
+        },
+        "task_id": {
+          "type": "string",
+          "pattern": "^t_[0-9a-f]{64}$"
+        },
+        "provisional": {
+          "const": true
+        },
+        "entry": {
+          "$ref": "#/$defs/preview_view"
+        }
+      },
+      "required": [
+        "operation",
+        "task_id",
+        "provisional",
+        "entry"
+      ],
+      "additionalProperties": false
+    },
+    "finish_open": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "$ref": "#/$defs/session"
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        },
+        "pages": {
+          "type": "array",
+          "maxItems": 5000,
+          "items": {
+            "$ref": "#/$defs/page"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "maxItems": 5001,
+          "items": {
+            "type": "string",
+            "maxLength": 1024
+          }
+        },
+        "index_built": {
+          "const": false
+        },
+        "snapshot_retained_in_memory": {
+          "const": true
+        },
+        "isolation": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/isolation_report"
+            }
+          ]
+        },
+        "operation": {
+          "const": "finish_open"
+        },
+        "task_id": {
+          "type": "string",
+          "pattern": "^t_[0-9a-f]{64}$"
+        },
+        "provisional": {
+          "const": false
+        },
+        "bindings": {
+          "type": "array",
+          "maxItems": 32,
+          "items": {
+            "type": "object",
+            "properties": {
+              "provisional_reference": {
+                "type": "string",
+                "pattern": "^p_[0-9a-f]{64}$"
+              },
+              "preview": {
+                "$ref": "#/$defs/preview_record"
+              },
+              "final": {
+                "$ref": "#/$defs/view"
+              }
+            },
+            "required": [
+              "provisional_reference",
+              "preview",
+              "final"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "preview_lineage": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "type": "object",
+            "properties": {
+              "reference": {
+                "type": "string",
+                "pattern": "^p_[0-9a-f]{64}$"
+              },
+              "record": {
+                "$ref": "#/$defs/preview_record"
+              }
+            },
+            "required": [
+              "reference",
+              "record"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "session_id",
+        "provenance",
+        "pages",
+        "warnings",
+        "index_built",
+        "snapshot_retained_in_memory",
+        "operation",
+        "task_id",
+        "provisional",
+        "bindings",
+        "preview_lineage"
+      ],
+      "additionalProperties": false
+    },
+    "cancel_open": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "const": "cancel_open"
+        },
+        "task_id": {
+          "type": "string",
+          "pattern": "^t_[0-9a-f]{64}$"
+        },
+        "status": {
+          "enum": [
+            "requested",
+            "already_requested",
+            "too_late"
+          ]
+        },
+        "work_finished": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "operation",
+        "task_id",
+        "status",
+        "work_finished"
+      ],
+      "additionalProperties": false
+    },
+    "task_status": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "const": "task_status"
+        },
+        "task_id": {
+          "type": "string",
+          "pattern": "^t_[0-9a-f]{64}$"
+        },
+        "state": {
+          "enum": [
+            "extracting",
+            "ready",
+            "cancel_requested",
+            "cancelled",
+            "expire_requested",
+            "expired",
+            "failed",
+            "finalized"
+          ]
+        },
+        "work_finished": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "operation",
+        "task_id",
+        "state",
+        "work_finished"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

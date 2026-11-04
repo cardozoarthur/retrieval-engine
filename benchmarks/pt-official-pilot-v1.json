@@ -1,0 +1,309 @@
+{
+  "schema_version": 1,
+  "name": "pt-official-pilot-v1",
+  "scope": "Small hand-curated retrieval pilot, frozen before scoring. Not a representative benchmark or legal/medical advice. Entire extracted sources including navigation are candidate corpus. No held-out production promotion.",
+  "chunk_tokens": 24,
+  "overlap_tokens": 12,
+  "sources": [
+    {
+      "requested_source": "https://www2.camara.leg.br/legin/fed/lei/2018/lei-13709-14-agosto-2018-787077-normaatualizada-pl.pdf",
+      "final_source": "https://www2.camara.leg.br/legin/fed/lei/2018/lei-13709-14-agosto-2018-787077-normaatualizada-pl.pdf",
+      "raw_sha256": "42035c084245390b080b06d36e5c89ce65beb221fb880905f5b5fd4a44a98e65",
+      "text_sha256": "3f74ef9aa46c5a048520590a4eb07dcc1ccfaff04dc4ca26eb2e4b7416047a6d",
+      "snapshot_id": "28ad83431dfff4b3f8cbad98ee6b1d2bf52fbcba9c10d6d9a8de958882394278"
+    },
+    {
+      "requested_source": "https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/d/dengue",
+      "final_source": "https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/d/dengue",
+      "raw_sha256": "9e7a129b13e072fd1e2934bad262680ac981c748c1842a2db24a643f3b024743",
+      "text_sha256": "dd90c7c465b4fd472409bf1875b547e9438c4e2a1a15f5f938602dcfbd228263",
+      "snapshot_id": "96163cad8fb1e3768e1d2a1bd70acc842ac14536029906f832e85e0ab5f32121"
+    }
+  ],
+  "queries": [
+    {
+      "id": "q01",
+      "text": "Em qual hipótese o uso doméstico de dados fica fora da aplicação desta lei?",
+      "category": "negation",
+      "gold": [
+        {
+          "source_index": 0,
+          "start": 2450,
+          "end": 2499,
+          "quote_sha256": "bd654d79111f186a4f9071e4010e75371dc7b94c55c4557795248ae92f6e3c7b"
+        }
+      ]
+    },
+    {
+      "id": "q02",
+      "text": "Qual definição vincula informação a um indivíduo que possa ser reconhecido?",
+      "category": "definition",
+      "gold": [
+        {
+          "source_index": 0,
+          "start": 4443,
+          "end": 4487,
+          "quote_sha256": "2eb01ede546bb39e9afd16ca7827be3e4937f5d226f3d70a16c148072d2cea02"
+        }
+      ]
+    },
+    {
+      "id": "q03",
+      "text": "Como deve aparecer a autorização escrita dentro de um contrato?",
+      "category": "exception",
+      "gold": [
+        {
+          "source_index": 0,
+          "start": 13832,
+          "end": 13883,
+          "quote_sha256": "93fd302f6ca3ecece10ed51c55e9e52e737a3e24f44f4005cc9746e02f742868"
+        }
+      ]
+    },
+    {
+      "id": "q04",
+      "text": "Quem precisa demonstrar que a autorização foi obtida corretamente?",
+      "category": "proof",
+      "gold": [
+        {
+          "source_index": 0,
+          "start": 13890,
+          "end": 13925,
+          "quote_sha256": "78957b3cfe8482a17b38e0fa47d1eef170e64ad8d32c5cb6aee5262c159ca8a0"
+        }
+      ]
+    },
+    {
+      "id": "q05",
+      "text": "Quais dados do titular podem ser retificados?",
+      "category": "right",
+      "gold": [
+        {
+          "source_index": 0,
+          "start": 26584,
+          "end": 26641,
+          "quote_sha256": "78d2d2572fcde7cebf0d5921fe445dc2026ead70f14c0b3df6596cf31dca4cf8"
+        }
+      ]
+    },
+    {
+      "id": "q06",
+      "text": "Onde está a obrigação de compensar prejuízos por tratamento que viola a legislação?",
+      "category": "liability",
+      "gold": [
+        {
+          "source_index": 0,
+          "start": 45278,
+          "end": 45300,
+          "quote_sha256": "a7bf5ae7590353a48ceeaa4b1043baf01a4c757ce170b328cf5c0d9bfb4ffcbe"
+        }
+      ]
+    },
+    {
+      "id": "q07",
+      "text": "Em que hipótese a culpa de outra pessoa afasta a responsabilidade?",
+      "category": "exception",
+      "gold": [
+        {
+          "source_index": 0,
+          "start": 46869,
+          "end": 46920,
+          "quote_sha256": "81bdc7aab65512de796660893da183839f1f38e58abe4b25256fbe3d3530fdc7"
+        }
+      ]
+    },
+    {
+      "id": "q08",
+      "text": "Quem deve ser informado sobre um incidente de segurança relevante?",
+      "category": "notification",
+      "gold": [
+        {
+          "source_index": 0,
+          "start": 48881,
+          "end": 48925,
+          "quote_sha256": "6659ed29bfed158a4b05c2b7fb6322dc31362a103fa47d3ecf80bcff513677b2"
+        }
+      ]
+    },
+    {
+      "id": "q09",
+      "text": "Qual é o teto monetário por infração previsto para a multa simples?",
+      "category": "number",
+      "gold": [
+        {
+          "source_index": 0,
+          "start": 54025,
+          "end": 54041,
+          "quote_sha256": "05bc6bf9f883c1528355892377a6d9bf2bc4f6cb7cd2bfb14717d0bfa2dade3d"
+        }
+      ]
+    },
+    {
+      "id": "q10",
+      "text": "Que dispositivo trata das hipóteses de exclusão de responsabilização?",
+      "category": "reference",
+      "gold": [
+        {
+          "source_index": 0,
+          "start": 46534,
+          "end": 46567,
+          "quote_sha256": "52f736aa7fdbf497cea4a775dfee43f1643cbe1188f3ffc93aa4d59b4b73c280"
+        }
+      ]
+    },
+    {
+      "id": "q11",
+      "text": "Qual é o mosquito transmissor citado no documento sobre dengue?",
+      "category": "definition",
+      "gold": [
+        {
+          "source_index": 1,
+          "start": 5453,
+          "end": 5484,
+          "quote_sha256": "82f0991befd9978ddf20238dd4b3d39fddc5b5d214006a9253436cee90ad56c1"
+        }
+      ]
+    },
+    {
+      "id": "q12",
+      "text": "Quais são os quatro sorotipos apresentados na página?",
+      "category": "number",
+      "gold": [
+        {
+          "source_index": 1,
+          "start": 5676,
+          "end": 5707,
+          "quote_sha256": "5287d3e68e276eabf0643f3518366437853783890217257c4920fb443fb8390d"
+        }
+      ]
+    },
+    {
+      "id": "q13",
+      "text": "Quando aumenta o risco de epidemias segundo o padrão sazonal descrito?",
+      "category": "season",
+      "gold": [
+        {
+          "source_index": 1,
+          "start": 6793,
+          "end": 6833,
+          "quote_sha256": "5e2abfafdc7285160a12a520787023582a8b2607c503bee1c81dd25674f3dd2d"
+        }
+      ]
+    },
+    {
+      "id": "q14",
+      "text": "Que medida preventiva fecha os locais usados para guardar água?",
+      "category": "prevention",
+      "gold": [
+        {
+          "source_index": 1,
+          "start": 11739,
+          "end": 11781,
+          "quote_sha256": "3113257c8edd0f3755bea10d8966aef451190817765545ef782781d302b19766"
+        }
+      ]
+    },
+    {
+      "id": "q15",
+      "text": "Que conduta de tratamento é expressamente desaconselhada no texto?",
+      "category": "negation",
+      "gold": [
+        {
+          "source_index": 1,
+          "start": 12120,
+          "end": 12138,
+          "quote_sha256": "43ed2007d9890726d4a87f38c8ee32093f7da56f962722e969731712dfb03ad1"
+        }
+      ]
+    },
+    {
+      "id": "q16",
+      "text": "A página afirma que já há terapia específica para a doença?",
+      "category": "negation",
+      "gold": [
+        {
+          "source_index": 1,
+          "start": 12319,
+          "end": 12371,
+          "quote_sha256": "c830bfc1ab11c8f5fe8db981048bcfcf7ee484e4da8e470ef6b312de966c251e"
+        }
+      ]
+    },
+    {
+      "id": "q17",
+      "text": "Qual é a base principal do tratamento descrito?",
+      "category": "treatment",
+      "gold": [
+        {
+          "source_index": 1,
+          "start": 11993,
+          "end": 12023,
+          "quote_sha256": "63be19e77804c9c96c3e6439e9ebf1fba65046496b821d05185989b118825ce8"
+        }
+      ]
+    },
+    {
+      "id": "q18",
+      "text": "Qual ação evita obstruções nos condutos de drenagem?",
+      "category": "prevention",
+      "gold": [
+        {
+          "source_index": 1,
+          "start": 11783,
+          "end": 11820,
+          "quote_sha256": "166d495f84a9edef9ec827d69456cd0e8b278a950f490832d5c6428fb2110163"
+        }
+      ]
+    },
+    {
+      "id": "q19",
+      "text": "Por que uma epidemia pode diminuir mesmo sem o efeito do controle do vetor?",
+      "category": "cause",
+      "gold": [
+        {
+          "source_index": 1,
+          "start": 11177,
+          "end": 11220,
+          "quote_sha256": "6019e46f362e80425b92f3c41cd747171712dc16093bb98faedae743f964be8d"
+        }
+      ]
+    },
+    {
+      "id": "q20",
+      "text": "Qual é a temperatura da febre de início repentino mencionada?",
+      "category": "number",
+      "gold": [
+        {
+          "source_index": 1,
+          "start": 7516,
+          "end": 7527,
+          "quote_sha256": "963738a2e9316f86271cdcdf39510f4ad8f0b3a28dd892fcdbe87a4fd485dca7"
+        }
+      ]
+    },
+    {
+      "id": "q21",
+      "text": "Qual foi a população de Marte registrada no censo de 2030?",
+      "category": "no_evidence",
+      "gold": []
+    },
+    {
+      "id": "q22",
+      "text": "Qual a chave privada criptográfica do servidor?",
+      "category": "no_evidence",
+      "gold": []
+    },
+    {
+      "id": "q23",
+      "text": "Em qual artigo está fixado o salário mínimo de 2045?",
+      "category": "no_evidence",
+      "gold": []
+    },
+    {
+      "id": "q24",
+      "text": "Qual receita utiliza bicarbonato para preparar um bolo?",
+      "category": "no_evidence",
+      "gold": []
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "apiVersion": 1,
+  "id": "retrieval-engine",
+  "version": "0.1.0",
+  "name": "Recuperação de evidências",
+  "entrypoint": {
+    "command": "node",
+    "args": [
+      "src/cli.mjs"
+    ]
+  },
+  "capabilities": [
+    "project.read",
+    "artifact.write",
+    "resource.read"
+  ],
+  "network": false,
+  "workflows": [
+    {
+      "id": "request",
+      "name": "Recuperar ou ampliar evidências selecionadas",
+      "args": [
+        "--job",
+        "{input}",
+        "--out",
+        "{output}"
+      ],
+      "inputsSchema": "schemas/request.json",
+      "timeoutSeconds": 120,
+      "artifacts": [
+        "source",
+        "evidence"
+      ]
+    }
+  ],
+  "publication": "manual",
+  "context": [
+    "README.md"
+  ]
+}

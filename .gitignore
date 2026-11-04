@@ -1,0 +1,9 @@
+/target/
+/tmp/
+/assets/
+__pycache__/
+/.tools/
+
+/adapters/foundry/lib/
+
+/verification/

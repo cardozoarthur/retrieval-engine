@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "retrieval-engine selected-input workflow v1",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "artifact_id",
+        "query",
+        "mode",
+        "unit"
+      ],
+      "properties": {
+        "artifact_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "before": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4096
+        },
+        "after": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4096
+        },
+        "unit": {
+          "enum": [
+            "words",
+            "characters"
+          ]
+        },
+        "operation": {
+          "const": "retrieve"
+        },
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "mode": {
+          "enum": [
+            "literal",
+            "bm25",
+            "hybrid",
+            "hybrid_prefilter"
+          ]
+        },
+        "top_k": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "artifact_id",
+        "pack_artifact_id",
+        "reference",
+        "before",
+        "after",
+        "unit"
+      ],
+      "properties": {
+        "artifact_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "before": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4096
+        },
+        "after": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4096
+        },
+        "unit": {
+          "enum": [
+            "words",
+            "characters"
+          ]
+        },
+        "operation": {
+          "const": "expand"
+        },
+        "pack_artifact_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "reference": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  ]
+}
