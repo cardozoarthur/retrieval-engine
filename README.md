@@ -1,14 +1,17 @@
 # Retrieval Engine
 
 Novo motor Rust independente, genérico, sem dependência de IADV ou Foundry.
+
 ## Instalação
 
 Ambiente validado: Windows x64, Rust 1.96 e ferramentas de compilação MSVC.
 O primeiro build baixa as dependências fixadas em Cargo.lock.
 
 ```powershell
+git clone https://github.com/cardozoarthur/retrieval-engine.git
+cd retrieval-engine
 cargo build --locked --bins
-cargo test --locked --all-features
+cargo test --locked --all-features -- --test-threads=1
 cargo run --locked -- README.md "motor" 5 8 words bm25
 ```
 
@@ -16,7 +19,35 @@ A inferência em CPU requer Python 3 para executar `python scripts/prepare_e5.py
 e o recurso Cargo `cpu-onnx`. O adaptador Foundry usa Node.js. A
 [documentação técnica](docs/COMPLETION.md) descreve arquitetura, validações e limites.
 O código tem licença [MIT](LICENSE). Os recursos externos mantêm suas licenças.
-Os recibos em verification/ são produzidos localmente pelos scripts de qualificação.
+Os recibos em `verification/` são produzidos localmente pelos scripts de qualificação.
+
+Para rodar os testes com inferência real no Windows:
+
+```powershell
+python scripts/prepare_e5.py
+cargo test --locked --all-features -- --ignored --test-threads=1
+```
+
+O modo serial reduz a interferência entre os testes que medem prazos curtos.
+Para conferir os contratos JSON:
+
+```powershell
+python -m pip install --target .tools/schema-validator jsonschema==4.26.0
+New-Item -ItemType Directory -Path verification -Force | Out-Null
+python scripts/validate_retrieval_contract.py
+```
+
+## Arquitetura
+
+A aquisição produz um snapshot com hash da fonte e do texto extraído. O índice
+BM25 temporário e o modelo E5 opcional ranqueiam trechos desse snapshot.
+O worker mantém sessões para expandir e exportar as evidências. O SDK Rust,
+a persistência SQLite opcional e o adaptador Foundry consomem esses contratos.
+
+- [Integração e protocolo](docs/INTEGRATION.md)
+- [Cliente Rust e persistência](docs/RUST_ADAPTER.md)
+- [Pacote Foundry](adapters/foundry/README.md)
+- [Benchmark e limites de generalização](docs/BENCHMARK.md)
 
 ## Uso atual
 
@@ -39,7 +70,7 @@ CLI: `retrieval-engine SOURCE QUERY [BEFORE=20] [AFTER=20] [chars|words] [litera
 Primeiro build requer dependências Rust de Cargo.lock; depois funciona offline
 para fontes locais. O exemplo official_sources faz dois GET reais opt-in na
 Câmara; testes normais não dependem de rede. Recibo real em
-[verification/r01-official-current.json](verification/r01-official-current.json).
+`verification/r01-official-current.json`.
 
 Na biblioteca, `Document::load(Source, Limits)` adquire a fonte; `find` retorna
 evidências; `expand(&evidence, before, after, Unit, max_chars)` amplia no mesmo
@@ -270,7 +301,7 @@ Canonicalização: SHA256 do JSON UTF-8 compacto de `[schema_version,payload]`, 
 chaves de objetos ordenadas e sem normalizar texto. A referência é SHA256 do
 registro canônico. Não há números de ponto flutuante nesses payloads. Recibo com
 checksum independente Python e fluxo real em fonte oficial:
-[r05-retrieval-worker-current.json](verification/r05-retrieval-worker-current.json).
+`verification/r05-retrieval-worker-current.json`.
 
 Contratos de [requisição](contracts/retrieval-v1.schema.json) e
 [resposta](contracts/retrieval-response-v1.schema.json); erros têm código estável,
@@ -388,8 +419,8 @@ Validação real: PDF oficial de 28 páginas, 81 janelas/22.552 tokens analisado
 Tempos observados em perfil dev/CPU local, excluem aquisição/carga do modelo e
 não constituem comparação controlada ou garantia de latência. Pico observado
 do processo rápido ~503 MiB (amostragem Windows). Recibos:
-[Full](verification/r04-hybrid-current.json) e
-[prefilter/CLI/memória](verification/r04-prefilter-current.json).
+`verification/r04-hybrid-current.json` e
+`verification/r04-prefilter-current.json`.
 Fixture portuguesa sem tokens em comum retornou vazio no BM25 e evidência
 pertinente no Full E5; isso não valida precisão jurídica ou superioridade geral.
 
@@ -433,8 +464,8 @@ por trecho; `--packed-batching` é opt-in e pode alterar levemente os vetores.
 Não misturar políticas ao criar/comparar índices. A latência não é garantida.
 Pico real observado em solicitações curtas: ~495 MiB de working set no Windows,
 incluindo runtime/tokenizador; não confundir com os 118 MB dos pesos. Ver
-[recibo CPU](verification/r03-e5-cpu-current.json) e
-[worker/memória](verification/r03-worker-current.json). Não são benchmark
+`verification/r03-e5-cpu-current.json` e
+`verification/r03-worker-current.json`. Não são benchmark
 comparativo nem prova de relevância jurídica.
 
 Pesos: conversão Xenova do intfloat/multilingual-e5-small, revisão

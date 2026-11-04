@@ -73,4 +73,4 @@ antes de novos builds/downloads. Não há pendência obrigatória no escopo loca
 
 ## Publicação
 
-[R09](tarefas/R09.md) ativa.
+[R09](tarefas/R09.md) publicada e validada por clone anônimo.
